@@ -1,54 +1,30 @@
 import pygame
 import random
 
-
-class Cone:
+class Obstaculo:
     def __init__(self, tela):
-        self.tamanho = [300, 300]
-
-        self.imagem = pygame.image.load('assets/cone.png')
-        self.imagem = pygame.transform.scale(
-            self.imagem,
-            self.tamanho
-        )
-
         self.tela = tela
+        self.tamanho = [40, 40]
+        self.imagem_original = pygame.image.load('assets/cone.png')
+        self.imagem = pygame.transform.scale(self.imagem_original, self.tamanho)
+        
+        self.velocidade = 5
+        self.resetar_posicao()
 
-        # 3 faixas
-        self.linhas = [300, 810, 1320]
+    def resetar_posicao(self):
 
-        # Escolhe uma faixa
-        self.x = random.choice(self.linhas)
-
-        # Começa acima da tela
-        self.y = random.randint(
-            -1500,
-            -300
-        )
-
-        # Velocidade maior
-        self.velocidade = 8
+        self.x = random.randint(0, self.tela.get_width() - self.tamanho[0])
+        self.y = -self.tamanho[1]
 
     def atualizar(self):
         self.y += self.velocidade
 
-        # Se sair da tela
         if self.y > self.tela.get_height():
-
-            self.y = random.randint(-1200, -300)
-
-            self.x = random.choice(self.linhas)
+            self.resetar_posicao()
 
     def desenhar(self):
-        self.tela.blit(
-            self.imagem,
-            (self.x, self.y)
-        )
+        self.tela.blit(self.imagem, (self.x, self.y))
 
     def detectarColisao(self, rectJogador):
-        rectCone = pygame.Rect(
-            (self.x, self.y),
-            self.imagem.get_size()
-        )
-
-        return rectJogador.colliderect(rectCone)
+        rectObstaculo = pygame.Rect((self.x, self.y), self.tamanho)
+        return rectJogador.colliderect(rectObstaculo)
